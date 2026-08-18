@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CSI Recruitment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Teko:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-cyan: #00ffff;
+            --bg-dark: #061118;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-overflow-scrolling: touch; 
+        }
+
+        /* Fixed Transparent Galaxy Background */
+        .galaxy-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            z-index: 0; 
+            pointer-events: none; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .rotating-galaxy {
+            width: 180vw; 
+            max-width: 1200px;
+            opacity: 0.35; 
+            animation: spinGalaxy 40s linear infinite;
+            -webkit-mask-image: radial-gradient(circle, black 40%, transparent 70%);
+            mask-image: radial-gradient(circle, black 40%, transparent 70%);
+        }
+
+        @keyframes spinGalaxy {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Navbar Setup */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            position: relative; 
+            z-index: 10;
+        }
+
+        .logo-placeholder img {
+            height: 55px;
+            object-fit: contain;
+            /* Added neon glow effect that traces the PNG shape */
+            filter: drop-shadow(0 0 5px var(--neon-cyan)) drop-shadow(0 0 15px rgba(0, 255, 255, 0.5));
+        }
+
+        .contact-btn {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), inset 0 0 5px rgba(0, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .contact-btn:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+
+        /* Contact Modal Setup */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 100; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(6, 17, 24, 0.85); 
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(0, 255, 255, 0.05);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 15px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+            position: relative;
+            width: 85%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: var(--neon-cyan);
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: white;
+        }
+
+        .modal-content h2 {
+            font-family: 'Teko', sans-serif;
+            font-size: 2.5rem;
+            margin: 0 0 1.5rem 0;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--neon-cyan);
+            letter-spacing: 2px;
+        }
+
+        .modal-content p {
+            font-size: 1rem;
+            margin: 1rem 0;
+            color: #ccc;
+        }
+
+        .modal-content a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s, text-shadow 0.3s;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .modal-content a:hover {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        /* Main Layout Grid */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            padding: 0 5% 2rem 5%;
+            flex-grow: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .left-content {
+            width: 100%;
+            max-width: 600px; 
+        }
+
+        /* Typography */
+        .outline-text {
+            font-family: 'Teko', sans-serif;
+            font-size: 4.5rem; 
+            line-height: 0.85;
+            margin: 0 0 1.5rem 0;
+            color: transparent;
+            -webkit-text-stroke: 2px var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Form Styling */
+        form {
+            background: rgba(0, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            padding: 1.5rem;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+            box-sizing: border-box;
+        }
+
+        .input-row {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        input, select, textarea {
+            background: rgba(6, 17, 24, 0.6); 
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 5px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem; 
+            padding: 1rem;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border 0.3s ease;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+            background: rgba(6, 17, 24, 0.9);
+        }
+
+        select option {
+            background-color: var(--bg-dark);
+            color: var(--neon-cyan);
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        button {
+            background: transparent;
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2), inset 0 0 10px rgba(0, 255, 255, 0.1);
+        }
+
+        button:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-dark);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+        }
+
+        /* Laptop / Desktop Adjustments */
+        @media (min-width: 900px) {
+            .main-container {
+                flex-direction: row;
+                align-items: center;
+                padding: 0 8%;
+            }
+            .left-content {
+                width: 50%;
+            }
+            .galaxy-bg {
+                left: auto;
+                right: 0;
+                width: 65vw;
+                justify-content: flex-end;
+            }
+            .rotating-galaxy {
+                width: 130vw; 
+                max-width: 1500px; 
+                margin-right: -10%; 
+            }
+            .input-row {
+                flex-direction: row;
+            }
+            .outline-text { 
+                font-size: 6.5rem; 
+                margin: 0 0 2rem 0;
+            }
+            form {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fixed Transparent Background Galaxy -->
+    <div class="galaxy-bg">
+        <img src="Spinning_Galaxy-removebg-preview.png" class="rotating-galaxy" alt="Rotating Galaxy">
+    </div>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="logo-placeholder">
+            <img src="csi-logo-removebg-preview.png" alt="CSI Logo"> 
+        </div>
+        <button class="contact-btn" id="openModalBtn">Contact us</button>
+    </header>
+
+    <!-- Contact Modal Pop-up -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModalBtn">&times;</span>
+            <h2>SUPPORT</h2>
+            <p><strong>Tanishtha Jaiswal:</strong> <br><a href="tel:+918584835901">8584835901</a></p>
+            <p><strong>Ashna Islam:</strong> <br><a href="tel:+919874140007">9874140007</a></p>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="main-container">
+        
+        <!-- Left Column: Typography & Form -->
+        <div class="left-content">
+            <h1 class="outline-text">THE ULTIMATE<br>RECRUITMENT.</h1>
+            
+            <form id="recruitmentForm">
+                <div class="input-row">
+                    <input type="text" name="Name" placeholder="Full Name" required>
+                    <input type="email" name="Email" placeholder="Email Address" required>
+                    <input type="text" name="WhatsApp No." placeholder="WhatsApp Number" required>
+                    <input type="text" name="Department" placeholder="Department" required>
+                    <input type="text" name="Year" placeholder="Year" required>
+                </div>
+                
+                <div class="input-row">
+                    <input type="tel" name="Phone" placeholder="Phone Number" required>
+                    <select name="Role" required>
+                        <option value="" disabled selected>Select Role</option>
+                        <option value="Graphics">Graphics</option>
+                        <option value="Web Dev">Web Dev</option>
+                        <option value="Video Editor">Video Editor</option>
+                        <option value="Photographer">Photographer</option>
+                        <option value="Management and Logistics">Management and Logistics</option>
+                        <option value="Content and Social Media">Content and Social Media</option>
+                        <option value="Public Relations">Public Relations</option>
+                    </select>
+                </div>
+
+                <textarea name="Reason" rows="3" placeholder="Tell us why you want to join" required></textarea>
+                
+                <button type="submit" id="submitBtn">SUBMIT APPLICATION</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- Modal Functionality ---
+        const modal = document.getElementById('contactModal');
+        const openBtn = document.getElementById('openModalBtn');
+        const closeBtn = document.getElementById('closeModalBtn');
+
+        openBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.style.display = 'flex';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // --- Google Sheets Form Submission ---
+        const form = document.getElementById('recruitmentForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyqR_E4zgyNfXcryWYWG55GphQlok536vYSyLKCHG9OULDyYkHm4HLZK04eJE9rN3zp6w/exec'; 
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            submitBtn.innerHTML = 'SENDING...';
+            
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => {
+                    submitBtn.innerHTML = 'SUBMITTED SUCCESSFULLY!';
+                    submitBtn.style.backgroundColor = '#00ffff';
+                    submitBtn.style.color = '#061118';
+                    form.reset();
+                    setTimeout(() => {
+                        submitBtn.innerHTML = 'SUBMIT APPLICATION';
+                        submitBtn.style.backgroundColor = 'transparent';
+                        submitBtn.style.color = '#00ffff';
+                    }, 3000);
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    submitBtn.innerHTML = 'ERROR. TRY AGAIN.';
+                });
+        });
+    </script>
+</body>
+</html>
